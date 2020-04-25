@@ -10,13 +10,13 @@ import (
 )
 
 type Dictionary struct {
-	words []string
+	words []string //TODO check if is a concurrent part
 }
 
 var instanceDictionary *Dictionary
 var once sync.Once
 
-func GetInstanceUsersList() *Dictionary {
+func GetInstanceDictionary() *Dictionary {
 	once.Do(func() {
 		instanceDictionary = &Dictionary{words: loadDictionaryFromFile(common.DICTIONARY_FILE)}
 	})
@@ -50,7 +50,7 @@ func (d *Dictionary) GetNwords(n int) ([]map[string]string, error) {
 	}
 
 	//TODO Convertire in struct?
-	chosenWords := make([]map[string]string, n, n)
+	chosenWords := make([]map[string]string, 0, n)
 
 	for i := 0; i < n; i++ { //TODO creare randomizzazione
 		translation := map[string]string{d.words[i]: ""}

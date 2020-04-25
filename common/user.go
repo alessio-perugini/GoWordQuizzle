@@ -6,13 +6,13 @@ import (
 )
 
 type User struct {
-	Score int64
-	nickname string
-	password string
+	Score      int64
+	nickname   string
+	password   string
 	friendList map[string]string
-	UdpPort uint16
-	Connected bool
-	InGame bool //TODO atomic
+	UdpPort    uint16
+	Connected  bool
+	InGame     bool //TODO atomic
 }
 
 func NewUser() *User {
@@ -25,7 +25,7 @@ func (u *User) GetNickname() string {
 	return u.nickname
 }
 
-func (u *User) SetNickname(name string)  {
+func (u *User) SetNickname(name string) {
 	u.nickname = name
 }
 
@@ -33,12 +33,12 @@ func (u *User) GetPassword() string {
 	return u.password
 }
 
-func (u *User) SetPssword(pw string){
+func (u *User) SetPssword(pw string) {
 	u.password = pw
 }
 
 type UsersList struct {
-	users map[string]User
+	users map[string]User //TODO handle concurrency with mutex or sync stuff
 }
 
 var instanceUserList *UsersList
@@ -54,13 +54,13 @@ func GetInstanceUsersList() *UsersList {
 	return instanceUserList
 }
 
-func (ul *UsersList) GetUsers() map[string]User{
+func (ul *UsersList) GetUsers() map[string]User {
 
 	return ul.users
 }
 
 func (ul *UsersList) AddUser(u User) error {
-	if u.nickname == ""{
+	if u.nickname == "" {
 		return errors.New("User not valid")
 	}
 	if ul.users[u.nickname].nickname == u.nickname {
@@ -71,8 +71,8 @@ func (ul *UsersList) AddUser(u User) error {
 	return nil
 }
 
-func (ul *UsersList) RemoveUser(u User) error{
-	if u.nickname == ""{
+func (ul *UsersList) RemoveUser(u User) error {
+	if u.nickname == "" {
 		return errors.New("User not valid")
 	}
 	if ul.users[u.nickname].nickname != u.nickname {
@@ -85,7 +85,7 @@ func (ul *UsersList) RemoveUser(u User) error{
 }
 
 func (ul *UsersList) IsConnected(nickname string) (bool, error) {
-	if nickname ==  "" {
+	if nickname == "" {
 		return false, errors.New("User not valid")
 	}
 	if ul.users[nickname].nickname != nickname {
@@ -95,8 +95,8 @@ func (ul *UsersList) IsConnected(nickname string) (bool, error) {
 	return ul.users[nickname].Connected, nil
 }
 
-func (ul *UsersList) SetConnected(nickname string, value bool) error{
-	if nickname ==  "" {
+func (ul *UsersList) SetConnected(nickname string, value bool) error {
+	if nickname == "" {
 		return errors.New("User not valid")
 	}
 	if ul.users[nickname].nickname != nickname {
@@ -110,7 +110,7 @@ func (ul *UsersList) SetConnected(nickname string, value bool) error{
 }
 
 func (ul *UsersList) GetUser(nickname string) (User, error) {
-	if nickname ==  "" {
+	if nickname == "" {
 		return User{}, errors.New("User not valid")
 	}
 
