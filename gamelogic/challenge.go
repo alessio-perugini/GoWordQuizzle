@@ -2,13 +2,18 @@ package gamelogic
 
 import (
 	"errors"
+	"github.com/alessio-perugini/GoWordQuizzle/common"
+	"math"
+	"math/rand"
 	"sync"
+	"time"
 )
 
 type Challenge struct {
-	matchUser, matchFriend string
-	id                     int
-	wordsToGuess           []map[string]string
+	matchUser    Match
+	matchFriend  Match
+	id           int
+	wordsToGuess []map[string]string
 }
 
 type Challenges struct {
@@ -63,4 +68,37 @@ func (c *Challenges) get(v Challenge) (int, Challenge) {
 	}
 
 	return -1, Challenge{}
+}
+
+func NewChallenge(id int) *Challenge {
+	rand.Seed(time.Now().UnixNano())
+	maxWord := rand.Intn(common.MAX_WORD_TO_GEN + 1)
+	kWordToSend := int(math.Max(float64(maxWord), common.MIN_WORD_TO_GEN))
+	words, err := GetInstanceDictionary().GetNwords(kWordToSend)
+	if err != nil {
+		return &Challenge{}
+	}
+
+	generateWordsTranslation(&words)
+
+	return &Challenge{
+		id:           id,
+		wordsToGuess: words,
+	}
+}
+
+func (c *Challenge) SetMatch(user, friend Match) {
+	if c.matchUser.player.GetNickname() != user.player.GetNickname() {
+		c.matchUser = user
+	}
+	if c.matchUser.player.GetNickname() != friend.player.GetNickname() {
+		c.matchFriend = friend
+	}
+}
+
+func generateWordsTranslation(words *[]map[string]string) {
+	for _, e := range *words {
+		keys := common.GetKeysFromMap(e)
+		e[keys[0]] = common.GetTranslationFromHttpGet(common.SendHttpRequest(keys[0]))
+	}
 }

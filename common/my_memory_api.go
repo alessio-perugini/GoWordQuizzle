@@ -4,7 +4,7 @@
 //    myMemoryAPI, err := UnmarshalMyMemoryAPI(bytes)
 //    bytes, err = myMemoryAPI.Marshal()
 
-package main
+package common
 
 import "bytes"
 import "errors"

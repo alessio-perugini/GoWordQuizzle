@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestGetInstanceDictionary(t *testing.T) {
+func TestDictionary_GetNwords(t *testing.T) {
 	d := GetInstanceDictionary()
 	n := 3
 
@@ -18,4 +18,8 @@ func TestGetInstanceDictionary(t *testing.T) {
 	if v, err := d.GetNwords(n); err == nil {
 		assert.Len(t, v, n)
 	}
+}
+
+func Test_loadDictionaryFromFile(t *testing.T) {
+	//TODO
 }
