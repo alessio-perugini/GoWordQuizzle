@@ -6,15 +6,15 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/alessio-perugini/GoWordQuizzle/common"
 	"log"
 	"net"
 	"strings"
 	"time"
-	"github.com/alessio-perugini/GoWordQuizzle/common"
 )
 
 func main() {
-	listen, err := net.Listen("tcp", "127.0.0.1:" + fmt.Sprintf("%d", common.TCP_PORT))
+	listen, err := net.Listen("tcp", "127.0.0.1:"+fmt.Sprintf("%d", common.TCP_PORT))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -41,7 +41,7 @@ func handlerConnection(conn net.Conn) {
 	for {
 		cMsg, err := read(conn)
 		if err != nil {
-			log.Printf( "%s [%s] closed connection.\n", time.Now().String(), conn.RemoteAddr().String())
+			log.Printf("%s [%s] closed connection.\n", time.Now().String(), conn.RemoteAddr().String())
 			return
 		}
 
@@ -72,6 +72,7 @@ func messageParser(msg string) {
 		log.Println("message to parse is empty")
 		return
 	}
+	//TODO use reader instead of split
 	token := strings.SplitN(msg, " ", 2)
 	otherTokens := strings.Split(token[1], " ")
 
@@ -137,7 +138,7 @@ func login(username, pw string) error {
 	u.SetPssword(pw)
 
 	ul := common.GetInstanceUsersList()
-	if ul.AddUser(*u) != nil{
+	if ul.AddUser(*u) != nil {
 		return errors.New("User already exists")
 	}
 

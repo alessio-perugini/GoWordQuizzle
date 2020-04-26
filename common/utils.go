@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 func GetTranslationFromHttpGet(body []byte) string {
@@ -37,4 +38,12 @@ func GetKeysFromMap(v map[string]string) []string {
 	}
 
 	return keys
+}
+
+func ParseDuration(interval string) time.Duration {
+	v, err := time.ParseDuration(interval)
+	if err != nil {
+		return 0
+	}
+	return v
 }

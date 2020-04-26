@@ -2,6 +2,7 @@ package common
 
 import (
 	"errors"
+	"github.com/tevino/abool"
 	"sync"
 )
 
@@ -12,7 +13,7 @@ type User struct {
 	friendList map[string]string
 	UdpPort    uint16
 	Connected  bool
-	InGame     bool //TODO atomic
+	InGame     abool.AtomicBool
 }
 
 func NewUser() *User {
