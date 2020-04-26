@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"text/scanner"
 	"time"
 )
 
@@ -46,4 +47,9 @@ func ParseDuration(interval string) time.Duration {
 		return 0
 	}
 	return v
+}
+
+func ReadNextToken(s *scanner.Scanner) string {
+	s.Scan()
+	return s.TokenText()
 }

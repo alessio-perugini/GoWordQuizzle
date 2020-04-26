@@ -25,7 +25,7 @@ func main() {
 		}
 	}()
 
-	for { //TODO sta robba va controllata e messa dentro il ciclo, vedere se la accept è bloccante
+	for {
 		conn, err := listen.Accept()
 		if err != nil {
 			fmt.Println()
@@ -36,7 +36,7 @@ func main() {
 }
 
 func handlerConnection(conn net.Conn) {
-	fmt.Printf("Connected %s\n", conn.RemoteAddr().String())
+	fmt.Printf("%s [%s] connected \n", time.Now().String(), conn.RemoteAddr().String())
 
 	for {
 		cMsg, err := read(conn)
@@ -45,7 +45,7 @@ func handlerConnection(conn net.Conn) {
 			return
 		}
 
-		messageParser(cMsg)
+		messageParser(conn, cMsg)
 	}
 }
 
@@ -56,18 +56,27 @@ func read(conn net.Conn) (string, error) {
 		return "", err
 	}
 
-	fmt.Printf("%s <- %s\n", time.Now().String(), msg)
-
 	return strings.TrimSpace(msg), nil
 }
 
 func write(conn net.Conn, msg string) {
-	fmt.Printf("%s -> %s\n", time.Now().String(), msg)
+	writer := bufio.NewWriter(conn)
+	byteWritten, err := writer.WriteString(msg)
 
-	conn.Write([]byte(msg)) //TODO gestire la scrittura parziale
+	if err != nil {
+		conn.Close()
+		log.Println("Error on Write" + err.Error())
+		return
+	} else {
+		err = writer.Flush() //TODO handle err
+	}
+
+	if byteWritten < len(msg) {
+		fmt.Printf("Bytes left to wrote: %d \n", len(msg)-byteWritten)
+	}
 }
 
-func messageParser(msg string) {
+func messageParser(conn net.Conn, msg string) {
 	if msg == "" {
 		log.Println("message to parse is empty")
 		return
@@ -86,8 +95,9 @@ func messageParser(msg string) {
 	case "LOGIN":
 		username := otherTokens[0]
 		pw := otherTokens[1]
-		//udpPort := otherTokens[2]
-		login(username, pw)
+		log.Println("LOGIN!")
+
+		login(username, pw, conn)
 		break
 	case "LOGOUT":
 		username := otherTokens[0]
@@ -125,7 +135,7 @@ func messageParser(msg string) {
 	}
 }
 
-func login(username, pw string) error {
+func login(username, pw string, conn net.Conn) error {
 	if username == "" {
 		return errors.New("username not valid")
 	}
@@ -144,6 +154,7 @@ func login(username, pw string) error {
 
 	fmt.Println(ul.GetUsers())
 
+	write(conn, "Login success!\n")
 	return nil
 }
 
