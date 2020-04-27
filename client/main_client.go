@@ -88,7 +88,7 @@ func login() {
 		log.Println("pw not valid")
 	}
 	if profile.GetNickname() == username {
-		log.Println("already loggedin as: " + username)
+		log.Println("already logged-in as: " + username)
 	}
 	if profile.GetNickname() != "" {
 		logout()

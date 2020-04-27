@@ -34,7 +34,7 @@ func (r *UserRegistration) RegisterUser(args *Args, reply *bool) error {
 	return nil
 }
 
-func startRPC() {
+func StartRPC() {
 	uReg := new(UserRegistration)
 	err := rpc.Register(uReg)
 	if err != nil {

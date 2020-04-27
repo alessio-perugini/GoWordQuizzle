@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func startTCP() {
+func StartTCP() {
 	listen, err := net.Listen("tcp", "127.0.0.1:"+fmt.Sprintf("%d", common.TCP_PORT))
 	if err != nil {
 		log.Fatal(err.Error())
@@ -143,15 +143,16 @@ func login(username, pw string, conn net.Conn) error {
 		return errors.New("password not valid")
 	}
 
-	u := common.NewUser()
-	u.SetNickname(username)
-	u.SetPssword(pw)
-
 	ul := common.GetInstanceUsersList()
-	if ul.AddUser(*u) != nil {
-		return errors.New("User already exists")
+	u, err := ul.GetUser(username)
+	if err != nil {
+		return errors.New("user not exists")
+	}
+	if u.GetPassword() != pw {
+		return errors.New("invalid password")
 	}
 
+	//TODO set loggedin flag
 	fmt.Println(ul.GetUsers())
 
 	write(conn, "Login success!\n")
