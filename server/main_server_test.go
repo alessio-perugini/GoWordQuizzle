@@ -1,11 +1,11 @@
-package main
+package server
 
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestLogin(t *testing.T){
+func TestLogin(t *testing.T) {
 	username := "gino"
 	pw := "superstrongpw"
 

@@ -1,7 +1,7 @@
 package common
 
 const (
-	RMI_PORT            uint16 = 50000
+	RPC_PORT            uint16 = 50000
 	TCP_PORT            uint16 = 50001
 	UDP_PORT            uint16 = 50002
 	UDP_TIMEOUT         string = "2s"

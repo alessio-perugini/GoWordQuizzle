@@ -1,4 +1,4 @@
-package main
+package server
 
 //TODO utilizzare la waitgroup nella gestione del lancio delal partita da parte dei 2 giocatori
 
@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func main() {
+func startTCP() {
 	listen, err := net.Listen("tcp", "127.0.0.1:"+fmt.Sprintf("%d", common.TCP_PORT))
 	if err != nil {
 		log.Fatal(err.Error())

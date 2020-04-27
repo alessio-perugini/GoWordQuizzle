@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/alessio-perugini/GoWordQuizzle/common"
+	"github.com/alessio-perugini/GoWordQuizzle/server"
 	"log"
 	"net"
+	"net/rpc"
 	"os"
 	"strings"
 	"text/scanner"
@@ -46,6 +48,7 @@ func main() {
 			os.Exit(1)
 			break
 		case "register":
+			register()
 			break
 		case "login":
 			login()
@@ -96,6 +99,41 @@ func login() {
 	write(cmdToSend)
 	result := read()
 	fmt.Printf("%s <- %s", time.Now().String(), result)
+}
+
+func register() {
+	username := common.ReadNextToken(&s)
+	pw := common.ReadNextToken(&s)
+	if username == "" {
+		log.Println("username not valid")
+	}
+	if pw == "" {
+		log.Println("pw not valid")
+	}
+	if profile.GetNickname() == username {
+		log.Println("please logout to proceed with the registration of " + username)
+		return
+	}
+
+	client, err := rpc.DialHTTP("tcp", "localhost:"+fmt.Sprint(common.RPC_PORT))
+	if err != nil {
+		log.Println("could not connect. Error on dial rpc server", err)
+		return
+	}
+
+	args := &server.Args{Username: username, Password: pw}
+	var reply bool
+	err = client.Call("UserRegistration.RegisterUser", args, &reply)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if reply == false {
+		log.Println("couldn't register retry.")
+	} else {
+		log.Println("registration success. You can log in.")
+	}
 }
 
 func logout() {

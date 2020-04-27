@@ -56,7 +56,6 @@ func GetInstanceUsersList() *UsersList {
 }
 
 func (ul *UsersList) GetUsers() map[string]User {
-
 	return ul.users
 }
 
